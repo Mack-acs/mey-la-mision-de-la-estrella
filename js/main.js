@@ -338,8 +338,16 @@ const CONFIG = {
 let S = 1;
 
 function resize() {
-    S = clamp(Math.min(innerWidth / 1000, innerHeight / 620), 0.55, 1);
-    document.documentElement.style.setProperty("--s", S);
+    // S = escala del "mundo" (arbustos, Mey, enemigos...)
+    S = clamp(Math.min(innerWidth / 1000, innerHeight / 620), 0.4, 1);
+    // U = escala de la interfaz (textos, cuadros, márgenes)
+    const U = clamp(Math.min(innerWidth / 900, innerHeight / 480), 0.5, 1);
+    // T = escala de los botones táctiles (nunca tan chicos que cueste tocarlos)
+    const T = Math.max(U, 0.8);
+    const st = document.documentElement.style;
+    st.setProperty("--s", S);
+    st.setProperty("--u", U);
+    st.setProperty("--t", T);
 }
 
 window.addEventListener("resize", resize);
@@ -938,12 +946,12 @@ class Zone {
             el = document.createElement("div");
             el.className = "clues" + (isTouch || !this.cluesOpenMs ? " collapsed" : "");
             el.innerHTML = '<button class="clues-head"></button><ul></ul>';
-            el.querySelector("button").onclick = () => this.toggleClues();
+            el.onclick = () => this.toggleClues();
             this.screen.appendChild(el);
             if (!isTouch && this.cluesOpenMs) this.openClues(this.cluesOpenMs);
         }
 
-        el.querySelector("button").textContent = `${title}  (Q)`;
+        el.querySelector("button").textContent = isTouch ? title : `${title}  (Q)`;
         el.querySelector("ul").innerHTML = items
             .map((i) => `<li class="${i.done ? "done" : ""}">${i.text}</li>`)
             .join("");
@@ -957,6 +965,13 @@ class Zone {
         el.classList.remove("collapsed");
         clearTimeout(this.cluesTimer);
         if (ms) this.cluesTimer = setTimeout(() => el.classList.add("collapsed"), ms);
+    }
+
+    closeClues() {
+        const el = this.screen.querySelector(".clues");
+        if (!el) return;
+        clearTimeout(this.cluesTimer);
+        el.classList.add("collapsed");
     }
 
     toggleClues() {
@@ -1000,6 +1015,7 @@ class Zone {
         const moving = dx !== 0 || dy !== 0;
 
         if (moving) {
+            if (isTouch) this.closeClues();   // en celular, al caminar se cierran las pistas
             const len = Math.hypot(dx, dy);
             dx /= len;
             dy /= len;
@@ -2925,6 +2941,16 @@ function goTo(scene) {
 
 $("start-button").addEventListener("click", () => {
     initAudio();
+    if (isTouch) {
+        try {
+            const root = document.documentElement;
+            const req = root.requestFullscreen || root.webkitRequestFullscreen;
+            const lock = () => screen.orientation && screen.orientation.lock &&
+                screen.orientation.lock("landscape").catch(() => {});
+            const p = req && req.call(root);
+            if (p && p.then) p.then(lock).catch(() => {}); else lock();
+        } catch (e) {}
+    }
     goTo(prologueScene);
 });
 
