@@ -55,19 +55,19 @@ const CONFIG = {
         flowers: [
             {
                 symbol: "peony",
-                clue: "Todo el jardín se vistió de octubre,\nmenos un árbol que se quedó en verano.\nBusca el arbusto que se acurruca a sus pies.",
+                clue: "1. Todo el jardín se vistió de octubre,\nmenos un árbol que se quedó en verano.\nBusca el arbusto que se acurruca a sus pies.",
                 title: "Una peonía",
                 text: "Delicada y hermosa. Como la belleza que florece incluso cuando nadie la está mirando. Quizá por eso esta flor tenía algo de ti."
             },
             {
                 symbol: "tulip",
-                clue: "Es el más antiguo y el más alto de todos;\nsu copa casi roza el borde del cielo.\nAl lado, un arbusto escucha sus historias desde hace años.",
+                clue: "2. Es el más antiguo y el más alto de todos;\nsu copa casi roza el borde del cielo.\nAl lado, un arbusto escucha sus historias desde hace años.",
                 title: "Un tulipán",
                 text: "Entre sus pétalos duerme un destello dorado. Parece recordar la luz que siempre llevas contigo."
             },
             {
                 symbol: "waterlily",
-                clue: "Cuando la lluvia se va, deja un espejo en el suelo.\nBusca el arbusto que lo vigila de cerca,\nel que prefiere un reflejo del cielo antes que la sombra de los árboles.",
+                clue: "3. Cuando la lluvia se va, deja un espejo en el suelo.\nBusca el arbusto que lo vigila de cerca,\nel que prefiere un reflejo del cielo antes que la sombra de los árboles.",
                 title: "Un nenúfar",
                 text: "Flota tranquila sobre el agua. Incluso bajo la lluvia, algunas flores nunca olvidan cómo brillar."
             }
