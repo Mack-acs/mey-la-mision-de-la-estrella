@@ -1,0 +1,2491 @@
+/* =====================================================
+   MEY — LA MISIÓN DE LA ESTRELLA
+   style.css
+===================================================== */
+
+:root {
+    --cream: #f8eee9;
+    --cream-light: #fffaf7;
+    --rose: #8e5d68;
+    --rose-soft: #a87984;
+    --ink: #6f555c;
+    --gold: #c8a45d;
+    --line: rgba(142, 93, 104, 0.3);
+    --s: 1;   /* escala del juego: la calcula main.js según la pantalla */
+
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { width: 100%; height: 100%; }
+
+body {
+    font-family: var(--font);
+    font-size: 18px;
+    background: var(--cream);
+    color: #4d3940;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hidden { display: none !important; }
+
+#game {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.screen {
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+}
+
+
+/* ==============================
+   BOTONES
+============================== */
+
+.btn {
+    padding: 14px 44px;
+    border: 1px solid #b88a95;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--rose);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(100, 70, 75, 0.14);
+}
+
+.btn:active { transform: translateY(0); }
+.btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+
+/* ==============================
+   PARTÍCULAS
+============================== */
+
+.fx {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 150;
+}
+
+.fx.back { z-index: 0; }
+
+.particle {
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    animation-duration: var(--dur);
+    animation-delay: var(--delay);
+    animation-iteration-count: infinite;
+}
+
+.particle svg { width: 100%; height: 100%; display: block; }
+
+.particle.twinkle {
+    color: var(--gold);
+    animation-name: twinkle;
+    animation-timing-function: ease-in-out;
+}
+
+.particle.leaf,
+.particle.petal {
+    top: -30px;
+    opacity: 0.6;
+    animation-name: fall;
+    animation-timing-function: linear;
+}
+
+.particle.mote {
+    bottom: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #e7d5f5 0%, rgba(170, 140, 200, 0) 70%);
+    animation-name: rise;
+    animation-timing-function: ease-in;
+}
+
+.particle.firefly {
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff3c4 0%, rgba(255, 220, 140, 0) 70%);
+    animation-name: drift;
+    animation-timing-function: ease-in-out;
+}
+
+.particle.rain {
+    top: -30px;
+    width: 1.5px;
+    height: 18px;
+    background: linear-gradient(transparent, rgba(255, 255, 255, 0.65));
+    animation-name: drop;
+    animation-timing-function: linear;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.1; transform: scale(0.6); }
+    50%      { opacity: 0.85; transform: scale(1); }
+}
+
+@keyframes fall {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    50%  { transform: translate(40px, 50vh) rotate(180deg); }
+    100% { transform: translate(-20px, 110vh) rotate(360deg); }
+}
+
+@keyframes rise {
+    0%   { transform: translateY(0); opacity: 0; }
+    20%  { opacity: 0.8; }
+    100% { transform: translateY(-110vh); opacity: 0; }
+}
+
+@keyframes drift {
+    0%, 100% { transform: translate(0, 0); opacity: 0.15; }
+    50%      { transform: translate(24px, -30px); opacity: 0.95; }
+}
+
+@keyframes drop {
+    to { transform: translate(-30px, 110vh); }
+}
+
+
+/* ==============================
+   INICIO Y PRÓLOGO
+============================== */
+
+#start-screen,
+#prologue-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #fffaf7 0%, #f8eee9 55%, #ead8d1 100%);
+}
+
+.title-container,
+.prologue-container {
+    position: relative;
+    z-index: 1;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.title-container { width: min(90%, 600px); }
+
+.title-star {
+    width: 92px;
+    height: 92px;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 0 14px rgba(226, 184, 90, 0.55));
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-9px); }
+}
+
+h1 {
+    font-size: clamp(4.2rem, 13vw, 7.5rem);
+    letter-spacing: 0.18em;
+    padding-left: 0.18em;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--rose);
+}
+
+h2 {
+    margin-top: 12px;
+    font-size: clamp(1.3rem, 3.4vw, 1.8rem);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--rose-soft);
+}
+
+.title-container p {
+    margin-top: 28px;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: #80666d;
+}
+
+#start-button { margin-top: 38px; }
+
+.prologue-container { width: min(90%, 650px); }
+
+.prologue-container > * {
+    opacity: 0;
+    animation: rise-in 1.1s ease forwards;
+}
+
+.prologue-container > :nth-child(1) { animation-delay: 0.3s; }
+.prologue-container > :nth-child(2) { animation-delay: 1.3s; }
+.prologue-container > :nth-child(3) { animation-delay: 2.5s; }
+.prologue-container > :nth-child(4) { animation-delay: 3.7s; }
+.prologue-container > :nth-child(5) { animation-delay: 4.7s; }
+.prologue-container > :nth-child(6) { animation-delay: 5.9s; }
+.prologue-container > :nth-child(7) { animation-delay: 7.1s; }
+
+@keyframes rise-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.prologue-date {
+    margin-bottom: 40px;
+    font-size: 1rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rose-soft);
+}
+
+.prologue-text {
+    max-width: 520px;
+    margin: 0 auto 22px;
+    font-size: 1.4rem;
+    line-height: 1.7;
+    color: var(--ink);
+}
+
+.prologue-star {
+    display: block;
+    width: 70px;
+    height: 70px;
+    margin: 38px auto;
+    filter: drop-shadow(0 0 12px rgba(226, 184, 90, 0.5));
+}
+
+.prologue-highlight {
+    margin-top: 32px;
+    font-size: 1.6rem;
+    font-style: italic;
+    color: var(--rose);
+}
+
+#continue-button { margin-top: 42px; }
+
+
+/* ==============================
+   ZONAS JUGABLES: BASE
+============================== */
+
+.zone { overflow: hidden; }
+
+.world {
+    position: absolute;
+    inset: 0;
+    z-index: 1;   /* siempre por encima de los fondos decorativos (::before / ::after) */
+    isolation: isolate;
+}
+
+/*
+   Todo objeto del mundo usa este mismo sistema:
+   --ay = punto de anclaje vertical (los pies, el tronco...)
+   --s  = escala global, --k = escala propia del objeto.
+   La profundidad (z-index) la calcula main.js según la posición Y.
+*/
+.obj {
+    position: absolute;
+    transform: translate(-50%, calc(var(--ay, 100) * -1%)) scale(calc(var(--s, 1) * var(--k, 1)));
+    transform-origin: 50% calc(var(--ay, 100) * 1%);
+}
+
+.sprite {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* HUD */
+.hud {
+    position: absolute;
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.hud-title {
+    padding: 8px 26px;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background: rgba(255, 250, 247, 0.82);
+    color: var(--rose);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.hud-goal {
+    padding: 5px 18px;
+    border-radius: 20px;
+    background: rgba(255, 250, 247, 0.7);
+    color: var(--rose);
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.hud-goal span { font-weight: 700; }
+
+.dark-zone .hud-title,
+#dungeon-screen .hud-title,
+#moon-screen .hud-title {
+    background: rgba(35, 29, 40, 0.78);
+    border-color: rgba(235, 210, 220, 0.25);
+    color: #ead7df;
+}
+
+#dungeon-screen .hud-goal,
+#moon-screen .hud-goal {
+    background: rgba(35, 29, 40, 0.7);
+    color: #d9c2cc;
+}
+
+
+/* ==============================
+   PERSONAJE
+============================== */
+
+.player {
+    width: 56px;
+    height: 84px;
+}
+
+.player::after {
+    content: "";
+    position: absolute;
+    left: 15%;
+    bottom: -3px;
+    width: 70%;
+    height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(rgba(60, 40, 50, 0.28), transparent 70%);
+}
+
+/* Izquierda: se voltea el sprite (la propiedad "scale" no choca con las animaciones) */
+.player.flip .sprite { scale: -1 1; }
+
+.player.walking .sprite { animation: step 0.36s ease-in-out infinite; }
+
+@keyframes step { 50% { transform: translateY(-5px); } }
+
+.player.attacking .sprite { animation: lunge 0.2s ease; }
+
+@keyframes lunge {
+    50% { transform: scale(1.1) translateY(-3px); }
+}
+
+.player.hurt .sprite { animation: hurt-flash 0.19s linear 2; }
+
+@keyframes hurt-flash {
+    50% { filter: brightness(1.8) saturate(0.4); }
+}
+
+.player.defeated .sprite { animation: faint 0.7s ease forwards; }
+
+@keyframes faint {
+    to { opacity: 0.2; transform: scale(0.85) translateY(8px); }
+}
+
+
+/* ==============================
+   OBJETOS: FLORES, PIEDRAS, ÁRBOLES, ARBUSTOS
+============================== */
+
+.flower { width: 58px; height: 58px; }
+
+.flower .sprite {
+    transform-origin: 50% 100%;
+    animation: sway 4.5s ease-in-out infinite;
+    filter: drop-shadow(0 3px 4px rgba(70, 45, 50, 0.18));
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-4deg); }
+    50%      { transform: rotate(4deg); }
+}
+
+.flower.done { pointer-events: none; }
+.flower.done .sprite { animation: vanish 0.5s ease forwards; }
+
+@keyframes vanish {
+    to { opacity: 0; transform: scale(0.15) translateY(-25px); }
+}
+
+.garden-tree {
+    width: 92px;
+    height: 145px;
+}
+
+.garden-tree::before {   /* tronco */
+    content: "";
+    position: absolute;
+    left: 37%;
+    bottom: 0;
+    width: 26%;
+    height: 55%;
+    border-radius: 45% 45% 20% 20%;
+    background: linear-gradient(90deg, #765447, #9a6b59, #6d4c42);
+    box-shadow: inset 5px 0 rgba(255, 255, 255, 0.12);
+}
+
+.garden-tree::after {   /* copa */
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 68%;
+    border-radius: 45% 48% 42% 50%;
+    background:
+        radial-gradient(circle at 25% 35%, var(--la, #d6a16e) 0 17%, transparent 18%),
+        radial-gradient(circle at 55% 20%, var(--lb, #c88968) 0 21%, transparent 22%),
+        radial-gradient(circle at 78% 43%, var(--la, #d99b70) 0 19%, transparent 20%),
+        radial-gradient(circle at 35% 67%, var(--lb, #b87961) 0 20%, transparent 21%),
+        radial-gradient(circle at 70% 68%, var(--la, #c98a65) 0 22%, transparent 23%),
+        var(--lc, #a97863);
+    box-shadow: 0 12px 20px rgba(70, 45, 40, 0.18);
+}
+
+.forest-tree {
+    --la: #f2b9c8;
+    --lb: #e8c36d;
+    --lc: #d99fb3;
+}
+
+.garden-bush {
+    width: 100px;
+    height: 58px;
+    border-radius: 50% 50% 45% 45%;
+    background:
+        radial-gradient(circle at 18% 52%, #a9ad78 0 25%, transparent 26%),
+        radial-gradient(circle at 40% 30%, #c1bd83 0 29%, transparent 30%),
+        radial-gradient(circle at 64% 45%, #aaa76f 0 31%, transparent 32%),
+        radial-gradient(circle at 82% 58%, #969b6d 0 25%, transparent 26%);
+    filter: drop-shadow(0 7px 7px rgba(70, 50, 45, 0.16));
+}
+
+.garden-rock {
+    width: 44px;
+    height: 27px;
+    border-radius: 55% 45% 45% 50%;
+    background: linear-gradient(145deg, #b8a99c, #8f827b);
+    box-shadow: inset 5px 4px rgba(255, 255, 255, 0.25), 0 5px 8px rgba(50, 40, 40, 0.16);
+}
+
+
+/* ==============================
+   PUERTAS
+============================== */
+
+.adventure-door {
+    width: 74px;
+    height: 112px;
+}
+
+.door-frame {
+    position: absolute;
+    inset: 0;
+    padding: 7px;
+    border-radius: 40px 40px 7px 7px;
+    background: linear-gradient(90deg, #6c473e, #a77861, #624139);
+    box-shadow: 0 10px 20px rgba(50, 35, 35, 0.25);
+}
+
+.door-wood {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 32px 32px 3px 3px;
+    background: repeating-linear-gradient(90deg, #765047 0 7px, #83584b 7px 13px);
+    border: 2px solid #50362f;
+}
+
+.door-wood::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 22px;
+    bottom: 18px;
+    border: 2px solid rgba(220, 180, 130, 0.3);
+    border-radius: 18px 18px 2px 2px;
+}
+
+.door-handle {
+    position: absolute;
+    right: 13px;
+    top: 55%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d6b45f;
+    box-shadow: 0 0 5px rgba(255, 220, 130, 0.4);
+}
+
+.door-label {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 9px);
+    transform: translateX(-50%);
+    padding: 4px 9px;
+    border-radius: 12px;
+    background: rgba(255, 250, 247, 0.85);
+    color: #8e5d68;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+.adventure-door.locked { filter: grayscale(0.35) brightness(0.72); }
+
+.adventure-door.unlocked {
+    filter: drop-shadow(0 0 14px rgba(220, 180, 100, 0.75));
+    animation: door-glow 2s ease-in-out infinite;
+}
+
+@keyframes door-glow {
+    50% { filter: drop-shadow(0 0 22px rgba(240, 200, 110, 0.95)); }
+}
+
+
+/* ==============================
+   JARDÍN (fondo)
+============================== */
+
+#garden-screen {
+    background:
+        radial-gradient(ellipse 40% 22% at 50% 64%, rgba(255, 244, 234, 0.7), transparent 72%),
+        radial-gradient(ellipse 12% 14% at 12% 84%, rgba(232, 169, 189, 0.35), transparent 100%),
+        radial-gradient(ellipse 11% 13% at 87% 74%, rgba(232, 169, 189, 0.3), transparent 100%),
+        radial-gradient(ellipse 10% 12% at 80% 93%, rgba(217, 137, 74, 0.25), transparent 100%),
+        radial-gradient(ellipse 9% 11% at 18% 58%, rgba(217, 137, 74, 0.2), transparent 100%),
+        linear-gradient(180deg, #f6dfd8 0%, #efd6c8 18%, #ddcab0 18.2%, #d3bfa1 100%);
+}
+
+#garden-screen::before {   /* hilera de setos al fondo */
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10%;
+    height: 8.4%;
+    background:
+        radial-gradient(circle at 20px 26px, #c4b88f 0 20px, transparent 21px) 0 0 / 44px 100% repeat-x,
+        radial-gradient(circle at 42px 30px, #b3a982 0 17px, transparent 18px) 0 0 / 44px 100% repeat-x;
+}
+
+
+/* ==============================
+   CÁMARA DE LAS SOMBRAS
+============================== */
+
+#dungeon-screen {
+    background:
+        radial-gradient(circle at 50% 45%, rgba(120, 90, 140, 0.35) 0%, transparent 60%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 64px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 64px),
+        radial-gradient(circle at center, #453a49 0%, #29232f 55%, #18151d 100%);
+}
+
+.dungeon-rock {
+    width: 65px;
+    height: 35px;
+    border-radius: 55% 45% 50% 45%;
+    background: linear-gradient(145deg, #625867, #39313f);
+    box-shadow: inset 6px 5px rgba(255, 255, 255, 0.07), 0 8px 12px rgba(0, 0, 0, 0.28);
+}
+
+#dungeon-screen .player::after { background: radial-gradient(rgba(0, 0, 0, 0.45), transparent 70%); }
+
+/* Sombras: la animación va en el sprite, así no pisa la posición */
+.enemy {
+    width: 72px;
+    height: 72px;
+}
+
+.enemy .sprite {
+    filter: drop-shadow(0 0 12px rgba(170, 130, 210, 0.6));
+    animation: ghost-float 1.8s ease-in-out infinite;
+}
+
+.enemy.chasing .sprite { animation: ghost-chase 0.45s ease-in-out infinite; }
+
+.enemy.windup .sprite {
+    animation: windup 0.16s linear infinite;
+    filter: drop-shadow(0 0 16px rgba(255, 150, 190, 0.95)) brightness(1.35);
+}
+
+.enemy.enemy-hit .sprite { filter: brightness(2) drop-shadow(0 0 14px #fff); }
+
+.enemy.defeated { pointer-events: none; }
+.enemy.defeated .sprite { animation: shadow-defeat 0.65s ease forwards; }
+
+@keyframes ghost-float {
+    50% { transform: translateY(-9px); }
+}
+
+@keyframes ghost-chase {
+    50% { transform: translateY(-5px) scale(1.07); }
+}
+
+@keyframes windup {
+    0%, 100% { transform: translateX(-3px) scale(1.1); }
+    50%      { transform: translateX(3px) scale(1.1); }
+}
+
+@keyframes shadow-defeat {
+    45%  { opacity: 0.8; transform: scale(1.25); }
+    100% { opacity: 0; transform: translateY(-20px) scale(0.1); filter: brightness(2) blur(4px); }
+}
+
+.enemy-hp {
+    position: absolute;
+    left: 50%;
+    top: -12px;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 5px;
+    overflow: hidden;
+    border-radius: 5px;
+    background: rgba(15, 10, 20, 0.7);
+    border: 1px solid rgba(240, 220, 245, 0.3);
+}
+
+.enemy-hp span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #b98ad0;
+    transition: width 0.2s ease;
+}
+
+/* Explosión de luz de Mey */
+.burst {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(245, 190, 255, 0.85) 18%,
+        rgba(215, 130, 255, 0.55) 42%,
+        rgba(170, 80, 255, 0.22) 65%,
+        transparent 72%);
+    box-shadow: 0 0 15px rgba(220, 150, 255, 0.9), 0 0 35px rgba(180, 90, 255, 0.7);
+    animation: burst 0.42s ease-out forwards;
+}
+
+@keyframes burst {
+    0%   { width: 25px; height: 25px; opacity: 1; }
+    40%  { width: 200px; height: 200px; opacity: 0.95; }
+    100% { width: 240px; height: 240px; opacity: 0; }
+}
+
+/* Vida de Mey */
+#player-hp {
+    position: absolute;
+    left: calc(20px + env(safe-area-inset-left, 0px));
+    top: calc(22px + env(safe-area-inset-top, 0px));
+    z-index: 250;
+    width: 180px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: rgba(35, 29, 40, 0.72);
+    border: 1px solid rgba(235, 210, 220, 0.22);
+}
+
+.hp-label {
+    margin-bottom: 5px;
+    color: #ead7df;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+}
+
+.hp-bar {
+    width: 100%;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.hp-bar span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #c77b92, #e3a6b7);
+    transition: width 0.2s ease;
+}
+
+
+/* ==============================
+   BOSQUE DE LAS MELODÍAS
+============================== */
+
+#forest-screen {
+    background:
+        radial-gradient(ellipse 30% 20% at 50% 70%, rgba(255, 238, 190, 0.55), transparent 80%),
+        radial-gradient(ellipse 18% 14% at 18% 50%, rgba(240, 170, 195, 0.35), transparent 100%),
+        radial-gradient(ellipse 18% 14% at 82% 44%, rgba(240, 200, 120, 0.3), transparent 100%),
+        linear-gradient(180deg, #e6c2d0 0%, #e8c2c0 16%, #d2aa94 16.2%, #c79c86 100%);
+}
+
+.bell {
+    width: 54px;
+    height: 72px;
+}
+
+.bell .sprite {
+    transform-origin: 50% 0;
+    animation: bell-idle 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(255, 235, 180, 0.6));
+}
+
+.bell.ring .sprite {
+    animation: bell-ring 0.6s ease;
+    filter: drop-shadow(0 0 18px rgba(255, 240, 170, 1)) brightness(1.3);
+}
+
+@keyframes bell-idle {
+    0%, 100% { transform: rotate(-3deg); }
+    50%      { transform: rotate(3deg); }
+}
+
+@keyframes bell-ring {
+    0%   { transform: rotate(0); }
+    20%  { transform: rotate(-14deg) scale(1.08); }
+    50%  { transform: rotate(10deg) scale(1.08); }
+    100% { transform: rotate(0); }
+}
+
+.melody-stone {
+    width: 70px;
+    height: 46px;
+    border-radius: 50% 50% 40% 40%;
+    background: linear-gradient(160deg, #cdb7b0, #8f7b7d);
+    box-shadow: inset 6px 4px rgba(255, 255, 255, 0.28), 0 6px 10px rgba(60, 40, 45, 0.25);
+}
+
+.stone-glow {
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    top: 10%;
+    height: 40%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 240, 180, 0.95), transparent 70%);
+    animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    50% { opacity: 0.35; transform: scale(1.15); }
+}
+
+/* Al resolver el puzzle, el bosque se ilumina */
+.zone.lit .world::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 60% 55% at 50% 55%, rgba(255, 232, 170, 0.5), transparent 75%);
+    animation: lit-in 1.6s ease forwards;
+}
+
+@keyframes lit-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+
+/* ==============================
+   BIBLIOTECA
+============================== */
+
+#library-screen {
+    background:
+        radial-gradient(ellipse 40% 24% at 50% 66%, rgba(255, 190, 200, 0.38), transparent 80%),
+        repeating-linear-gradient(90deg, rgba(90, 55, 40, 0.07) 0 2px, transparent 2px 70px),
+        linear-gradient(180deg, #ecd9c8 0%, #e4cbb4 26%, #b98f6e 26.2%, #a97f60 100%);
+}
+
+.shelf {
+    width: 130px;
+    height: 150px;
+    border: 5px solid #7a5444;
+    border-radius: 6px 6px 0 0;
+    background:
+        repeating-linear-gradient(90deg,
+            #c97f93 0 7px, #e0a85a 7px 13px, #a9b98a 13px 21px,
+            #b69ad6 21px 27px, #d98f9f 27px 34px, #8fa6c9 34px 40px),
+        #5b3d33;
+    background-size: 100% 28px;
+    background-repeat: repeat-y;
+    box-shadow: inset 0 -4px #7a5444, 0 10px 14px rgba(60, 35, 30, 0.2);
+}
+
+.shelf::after {   /* tablas entre los estantes */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(180deg, transparent 0 24px, #7a5444 24px 28px);
+}
+
+.window {
+    width: 100px;
+    height: 120px;
+    border: 6px solid #8a6352;
+    border-radius: 50px 50px 4px 4px;
+    background: linear-gradient(180deg, #a9bdd0, #d3dde8);
+    overflow: hidden;
+    box-shadow: 0 8px 14px rgba(60, 35, 30, 0.2);
+}
+
+.window::before {   /* lluvia sobre el vidrio */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(100deg, rgba(255, 255, 255, 0.55) 0 1px, transparent 1px 9px);
+    animation: glass-rain 0.8s linear infinite;
+}
+
+.window::after {   /* marco en cruz */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(#8a6352, #8a6352) 50% 0 / 4px 100% no-repeat,
+        linear-gradient(#8a6352, #8a6352) 0 55% / 100% 4px no-repeat;
+}
+
+@keyframes glass-rain {
+    to { background-position: -30px 60px; }
+}
+
+.table {
+    width: 150px;
+    height: 70px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #d9b79a, #c29a78);
+    border: 3px solid #8a6352;
+    box-shadow: 0 14px 12px rgba(60, 35, 30, 0.22);
+}
+
+.book { width: 42px; height: 36px; }
+
+.book .sprite { filter: drop-shadow(0 3px 3px rgba(50, 30, 30, 0.25)); }
+
+.book-mark {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+}
+
+
+/* ==============================
+   LUNA Y ESTRELLA
+============================== */
+
+#moon-screen,
+.night {
+    background:
+        radial-gradient(ellipse 80% 30% at 50% 108%, #2d2750 0%, transparent 70%),
+        linear-gradient(180deg, #151a3d 0%, #2c2757 45%, #5d3f72 78%, #8e5d78 100%);
+}
+
+#moon-screen::after {   /* colina */
+    content: "";
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    bottom: -18%;
+    height: 62%;
+    z-index: 0;
+    border-radius: 50% 50% 0 0;
+    background: radial-gradient(ellipse at 50% 0, #4a3c6e, #28224a 70%);
+}
+
+.sky-moon {
+    position: absolute;
+    left: 66%;
+    top: 12%;
+    width: 120px;
+    height: 120px;
+    z-index: 1;
+    filter: drop-shadow(0 0 22px rgba(255, 238, 190, 0.7));
+    animation: float 6s ease-in-out infinite;
+}
+
+.sky-star {
+    position: absolute;
+    left: 26%;
+    top: 14%;
+    width: 84px;
+    height: 84px;
+    z-index: 1;
+    opacity: 0.12;
+    filter: grayscale(1);
+    transition: opacity 3s ease, filter 3s ease;
+}
+
+.zone.starlit .sky-star {
+    opacity: 1;
+    filter: drop-shadow(0 0 26px rgba(255, 225, 140, 0.95));
+    animation: float 4s ease-in-out infinite;
+}
+
+.orb { width: 34px; height: 34px; }
+
+.orb-core {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #ffe9a8 35%, rgba(255, 190, 220, 0) 72%);
+    box-shadow: 0 0 20px rgba(255, 220, 160, 0.9);
+    animation: float 3s ease-in-out infinite;
+}
+
+.orb.done .orb-core { animation: vanish 0.6s ease forwards; }
+
+.altar {
+    width: 64px;
+    height: 54px;
+    border-radius: 12px 12px 6px 6px;
+    background: linear-gradient(160deg, #8a7aa8, #4f4470);
+    box-shadow: inset 5px 4px rgba(255, 255, 255, 0.15), 0 8px 12px rgba(0, 0, 0, 0.35);
+    opacity: 0.55;
+    transition: opacity 1s ease;
+}
+
+.altar.ready { opacity: 1; }
+
+.altar-glow {
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    top: -22px;
+    height: 34px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 235, 170, 0.9), transparent 70%);
+    opacity: 0;
+}
+
+.altar.ready .altar-glow {
+    opacity: 1;
+    animation: pulse 2.2s ease-in-out infinite;
+}
+
+#moon-screen .player::after { background: radial-gradient(rgba(0, 0, 0, 0.4), transparent 70%); }
+
+
+/* ==============================
+   CARTA Y FINAL
+============================== */
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(40, 28, 40, 0.5);
+}
+
+#card {
+    width: min(92%, 560px);
+    max-height: 86dvh;
+    overflow-y: auto;
+    padding: 34px 38px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--cream-light);
+    box-shadow: 0 20px 50px rgba(30, 20, 35, 0.4);
+    text-align: center;
+    animation: pop-card 0.5s ease;
+}
+
+@keyframes pop-card {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+}
+
+#card h3 {
+    margin-bottom: 18px;
+    color: var(--rose);
+    font-size: 1.7rem;
+    font-weight: 600;
+}
+
+#card p {
+    margin-bottom: 16px;
+    color: var(--ink);
+    font-size: 1.2rem;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+#card .clue {
+    font-size: 1.45rem;
+    font-style: italic;
+    color: var(--rose);
+}
+
+#card.letter { text-align: left; }
+#card.letter h3 { text-align: center; }
+#card.letter .sign { margin-top: 24px; text-align: right; font-style: italic; color: var(--rose); }
+
+#card .btn { margin-top: 12px; }
+
+.card-art {
+    margin: 0 auto 14px;
+    width: 84px;
+    height: 84px;
+    filter: drop-shadow(0 0 14px rgba(226, 184, 90, 0.6));
+}
+
+.card-art svg { width: 100%; height: 100%; }
+
+.final-sky { position: absolute; inset: 0; }
+
+.final-moon {
+    position: absolute;
+    left: 56%;
+    top: 16%;
+    width: clamp(90px, 16vw, 170px);
+    height: clamp(90px, 16vw, 170px);
+    filter: drop-shadow(0 0 28px rgba(255, 238, 190, 0.75));
+    animation: float 6s ease-in-out infinite;
+}
+
+.final-star {
+    position: absolute;
+    left: calc(56% - clamp(60px, 11vw, 110px));
+    top: 20%;
+    width: clamp(60px, 10vw, 110px);
+    height: clamp(60px, 10vw, 110px);
+    filter: drop-shadow(0 0 30px rgba(255, 225, 140, 0.95));
+    animation: float 4s ease-in-out infinite;
+}
+
+.final-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12%;
+    z-index: 2;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.final-text h1 {
+    font-size: clamp(2.2rem, 7vw, 4.4rem);
+    letter-spacing: 0.06em;
+    padding-left: 0;
+    color: #fbe9ef;
+    opacity: 0;
+    animation: rise-in 2.4s ease 4.5s forwards;
+}
+
+.final-text h2 {
+    margin-top: 16px;
+    color: #f1cbd6;
+    font-style: italic;
+    opacity: 0;
+    animation: rise-in 2.4s ease 7.5s forwards;
+}
+
+#replay-button {
+    margin-top: 40px;
+    opacity: 0;
+    animation: rise-in 2s ease 13.5s forwards;
+}
+
+
+/* ==============================
+   MENSAJE DE INTERACCIÓN Y DIÁLOGOS
+============================== */
+
+#prompt {
+    position: absolute;
+    left: 50%;
+    bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 350;
+    padding: 9px 22px;
+    border: 1px solid var(--line);
+    border-radius: 25px;
+    background: rgba(255, 250, 247, 0.94);
+    color: var(--rose);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+#prompt.dark {
+    background: rgba(35, 29, 40, 0.94);
+    border-color: rgba(235, 210, 220, 0.3);
+    color: #f0d9e2;
+}
+
+#dialogue {
+    position: absolute;
+    left: 50%;
+    top: calc(104px + env(safe-area-inset-top, 0px));
+    transform: translateX(-50%);
+    z-index: 400;
+    width: min(86%, 440px);
+    padding: 11px 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(255, 250, 247, 0.88);
+    box-shadow: 0 8px 22px rgba(80, 50, 55, 0.14);
+    text-align: center;
+    pointer-events: none;
+    animation: pop-top 0.4s ease;
+}
+
+@keyframes pop {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+#dialogue-title {
+    margin-bottom: 3px;
+    color: var(--rose);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+#dialogue-text {
+    color: var(--ink);
+    font-size: 0.98rem;
+    line-height: 1.4;
+    white-space: pre-line;
+}
+
+#dialogue.dark {
+    background: rgba(35, 29, 40, 0.88);
+    border-color: rgba(235, 210, 220, 0.3);
+}
+
+#dialogue.dark #dialogue-title { color: #f0d9e2; }
+#dialogue.dark #dialogue-text  { color: #d9c2cc; }
+
+#fade {
+    position: absolute;
+    inset: 0;
+    z-index: 1000;
+    background: var(--cream);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+}
+
+#fade.on {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+/* ==============================
+   CONTROLES TÁCTILES
+============================== */
+
+#touch-controls { display: none; }
+
+@media (pointer: coarse) {
+
+    body.playing #touch-controls { display: block; }
+
+    .dpad {
+        position: absolute;
+        left: calc(16px + env(safe-area-inset-left, 0px));
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        z-index: 300;
+        display: grid;
+        grid-template-columns: repeat(3, 52px);
+        grid-template-rows: repeat(3, 52px);
+        gap: 4px;
+    }
+
+    .dbtn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid rgba(184, 138, 149, 0.7);
+        border-radius: 50%;
+        background: rgba(255, 250, 247, 0.75);
+        touch-action: none;
+    }
+
+    .dbtn svg { width: 24px; height: 24px; fill: var(--rose); }
+
+    .dbtn.up    { grid-area: 1 / 2; }
+    .dbtn.left  { grid-area: 2 / 1; }
+    .dbtn.right { grid-area: 2 / 3; }
+    .dbtn.down  { grid-area: 3 / 2; }
+
+    .dbtn.left svg  { transform: rotate(-90deg); }
+    .dbtn.right svg { transform: rotate(90deg); }
+    .dbtn.down svg  { transform: rotate(180deg); }
+
+    .dbtn.active { background: #fff; border-color: var(--rose); }
+
+    #touch-interact {
+        position: absolute;
+        right: calc(18px + env(safe-area-inset-right, 0px));
+        bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+        z-index: 300;
+        padding: 22px 24px;
+        border: 1px solid rgba(184, 138, 149, 0.8);
+        border-radius: 40px;
+        background: rgba(255, 250, 247, 0.85);
+        color: var(--rose);
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        touch-action: manipulation;
+    }
+
+    #touch-interact:active { background: #fff; transform: scale(0.96); }
+
+    #prompt { bottom: calc(200px + env(safe-area-inset-bottom, 0px)); }
+
+    #dialogue { top: calc(118px + env(safe-area-inset-top, 0px)); }
+}
+
+@keyframes pop-top {
+    from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+
+/* ==============================
+   PANTALLAS PEQUEÑAS
+============================== */
+
+@media (max-width: 700px) {
+
+    body { font-size: 16px; }
+
+    .hud-title { font-size: 1.1rem; padding: 7px 18px; }
+    .prologue-text { font-size: 1.25rem; }
+    #dialogue { padding: 14px 18px; }
+
+    #player-hp {
+        width: 140px;
+        top: calc(104px + env(safe-area-inset-top, 0px));
+        left: 12px;
+    }
+
+    #card { padding: 26px 22px; }
+    .sky-moon { left: 58%; width: 90px; height: 90px; }
+    .sky-star { left: 18%; width: 64px; height: 64px; }
+}
+
+
+/* ==============================
+   ACCESIBILIDAD: movimiento reducido
+============================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .particle,
+    .title-star,
+    .flower .sprite,
+    .bell .sprite,
+    .enemy .sprite,
+    .sky-moon,
+    .final-moon,
+    .final-star,
+    .adventure-door.unlocked {
+        animation: none;
+    }
+
+    .prologue-container > *,
+    .final-text h1,
+    .final-text h2,
+    #replay-button {
+        animation-duration: 0.01s;
+        animation-delay: 0s !important;
+    }
+}
+
+
+/* ==============================
+   PANEL DE PISTAS
+============================== */
+
+.clues {
+    position: absolute;
+    left: calc(14px + env(safe-area-inset-left, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index: 260;
+    width: min(250px, 62vw);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 250, 247, 0.82);
+    overflow: hidden;
+}
+
+.clues-head {
+    display: block;
+    width: 100%;
+    padding: 8px 14px;
+    border: 0;
+    background: transparent;
+    color: var(--rose);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-align: left;
+    cursor: pointer;
+}
+
+.clues ul { list-style: none; padding: 0 14px 10px; }
+
+.clues li {
+    margin-top: 6px;
+    color: var(--ink);
+    font-size: 0.92rem;
+    line-height: 1.35;
+    white-space: pre-line;
+}
+
+.clues li.done { opacity: 0.55; text-decoration: line-through; }
+
+.clues.collapsed ul { display: none; }
+
+#dungeon-screen .clues,
+#moon-screen .clues {
+    background: rgba(35, 29, 40, 0.82);
+    border-color: rgba(235, 210, 220, 0.25);
+}
+
+#dungeon-screen .clues-head,
+#moon-screen .clues-head { color: #f0d9e2; }
+
+#dungeon-screen .clues li,
+#moon-screen .clues li { color: #d9c2cc; }
+
+@media (pointer: coarse) {
+    /* En celular el panel va a la derecha, sobre el botón, y empieza cerrado */
+    .clues {
+        left: auto;
+        right: calc(14px + env(safe-area-inset-right, 0px));
+        bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+        width: min(230px, 58vw);
+    }
+}
+
+
+/* ==============================
+   NUEVOS DETALLES
+============================== */
+
+/* Arbusto revisado */
+.garden-bush.rustle { animation: rustle 0.45s ease; }
+.garden-bush.searched { filter: brightness(0.93) drop-shadow(0 7px 7px rgba(70, 50, 45, 0.16)); }
+
+@keyframes rustle {
+    25% { rotate: -3deg; }
+    75% { rotate: 3deg; }
+}
+
+/* Sombras que aparecen */
+.enemy.spawning { animation: spawn-in 0.9s ease; }
+
+@keyframes spawn-in {
+    from { opacity: 0; filter: blur(8px) brightness(2); }
+    to   { opacity: 1; filter: none; }
+}
+
+/* Campanas después de resolver la melodía */
+.bell.sung .sprite {
+    animation: bell-idle 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 0 16px rgba(255, 235, 170, 0.95));
+}
+
+/* Nota de la ventana */
+.note { width: 30px; height: 36px; }
+
+.note-paper {
+    position: absolute;
+    inset: 0;
+    border-radius: 3px;
+    background:
+        repeating-linear-gradient(180deg, transparent 0 7px, rgba(142, 93, 104, 0.35) 7px 8px) 5px 8px / 20px 24px no-repeat,
+        #fff6e2;
+    border: 1px solid #d9c3a0;
+    box-shadow: 0 4px 6px rgba(60, 35, 30, 0.25);
+    transform: rotate(-5deg);
+    animation: pulse 2.6s ease-in-out infinite;
+}
+
+/* Portada del libro "La melodía de Mey" */
+.book-cover {
+    position: relative;
+    width: min(210px, 70%);
+    margin: 0 auto 22px;
+    padding: 30px 20px 26px 28px;
+    border-radius: 6px 14px 14px 6px;
+    border-left: 12px solid #d98f9f;
+    background: linear-gradient(165deg, #b8c58d 0%, #e8cf8a 55%, #f0b9b0 100%);
+    box-shadow: 0 14px 24px rgba(60, 35, 30, 0.3);
+}
+
+.book-cover svg {
+    display: block;
+    width: 38px;
+    height: 38px;
+    margin: 0 auto 10px;
+    filter: drop-shadow(0 0 8px rgba(255, 245, 190, 0.9));
+}
+
+.book-cover h4 {
+    color: #5a3a2f;
+    font-size: 1.6rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.book-cover span {
+    display: block;
+    margin-top: 10px;
+    color: rgba(90, 58, 47, 0.8);
+    font-size: 0.9rem;
+}
+
+
+/* ==============================
+   CALABOZO: OBJETOS, LLAVE, PROYECTILES
+============================== */
+
+.relic { width: 46px; height: 58px; transition: translate 0.5s ease, opacity 0.5s ease; }
+.relic-body { position: absolute; inset: 0; }
+
+.relic.jar .relic-body {
+    border-radius: 38% 38% 46% 46% / 26% 26% 60% 60%;
+    background: radial-gradient(circle at 32% 30%, #b99a86, #7b5d52 72%);
+    box-shadow: inset 4px 3px rgba(255, 255, 255, 0.14), 0 8px 10px rgba(0, 0, 0, 0.4);
+}
+
+.relic.jar .relic-body::before {   /* borde de la boca */
+    content: "";
+    position: absolute;
+    left: 22%;
+    right: 22%;
+    top: -5px;
+    height: 10px;
+    border-radius: 50%;
+    background: #5e463e;
+}
+
+.relic.crate { width: 56px; height: 46px; }
+
+.relic.crate .relic-body {
+    border: 3px solid #4a3a35;
+    border-radius: 4px;
+    background:
+        linear-gradient(#4a3a35, #4a3a35) 50% 0 / 3px 100% no-repeat,
+        repeating-linear-gradient(0deg, #8a6b58 0 9px, #7a5c4a 9px 11px);
+    box-shadow: inset 3px 3px rgba(255, 255, 255, 0.1), 0 8px 10px rgba(0, 0, 0, 0.4);
+}
+
+.relic.lifted { translate: 0 -34px; opacity: 0; pointer-events: none; }
+
+.key-item {
+    width: 54px;
+    height: 54px;
+    pointer-events: none;
+    filter: drop-shadow(0 0 14px rgba(255, 225, 140, 0.95));
+    animation: key-rise 1.5s ease forwards;
+}
+
+@keyframes key-rise {
+    0%   { translate: 0 0; opacity: 0; scale: 0.4; }
+    30%  { translate: 0 -30px; opacity: 1; scale: 1.2; }
+    100% { translate: 0 -64px; opacity: 0; scale: 1; }
+}
+
+.bolt {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, #fff 0 15%, #ff9ec8 32%, #8a4fc7 66%, transparent 74%);
+    box-shadow: 0 0 12px rgba(200, 110, 255, 0.9);
+}
+
+.burst::after {   /* onda de choque de la explosión */
+    content: "";
+    position: absolute;
+    inset: 4%;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 235, 255, 0.85);
+}
+
+#touch-attack { display: none; }
+
+@media (pointer: coarse) {
+
+    body.playing.combat #touch-attack {
+        display: block;
+        position: absolute;
+        right: calc(18px + env(safe-area-inset-right, 0px));
+        bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+        z-index: 300;
+        padding: 22px 28px;
+        border: 1px solid rgba(184, 138, 149, 0.8);
+        border-radius: 40px;
+        background: rgba(255, 250, 247, 0.9);
+        color: var(--rose);
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        touch-action: manipulation;
+    }
+
+    body.combat #touch-attack:active { background: #fff; transform: scale(0.96); }
+
+    .clues { bottom: calc(200px + env(safe-area-inset-bottom, 0px)); }
+}
+
+
+/* =====================================================
+   ACTUALIZACIÓN GRANDE: todo lo nuevo va desde aquí.
+   (Lo anterior se conserva; solo se ajustaron unas pocas reglas
+   para que los textos con saltos de línea y el final se vean bien.)
+===================================================== */
+
+.clues { width: min(310px, 70vw); }
+
+/* ==============================
+   CHISPAS DE LUZ
+============================== */
+
+.spark-root { width: 0; height: 0; pointer-events: none; }
+
+.spark {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--sz, 6px);
+    height: var(--sz, 6px);
+    margin: calc(var(--sz, 6px) / -2) 0 0 calc(var(--sz, 6px) / -2);
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0, var(--c, #ffe39a) 45%, transparent 72%);
+    animation: spark-fly var(--t, 0.9s) ease-out forwards;
+}
+
+@keyframes spark-fly {
+    from { transform: translate(0, 0) scale(1); opacity: 1; }
+    to   { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+
+
+/* ==============================
+   PUERTAS QUE SE ABREN DE VERDAD
+============================== */
+
+.adventure-door { perspective: 420px; }
+
+.door-light {
+    position: absolute;
+    inset: 7px;
+    border-radius: 32px 32px 3px 3px;
+    background: radial-gradient(ellipse at 50% 85%, #fff7d6 0%, #ffd98a 42%, #f2a977 100%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.door-wood {
+    transform-origin: left center;
+    transition: transform 1.2s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+
+.adventure-door.opening .door-light {
+    opacity: 1;
+    animation: door-flicker 2.4s ease-in-out infinite;
+}
+
+.adventure-door.open .door-wood { transform: rotateY(-74deg); }
+
+.adventure-door.open::after {   /* la luz se derrama sobre el suelo */
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 90%;
+    width: 170%;
+    height: 64px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255, 228, 150, 0.7), transparent 70%);
+    pointer-events: none;
+    animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes door-flicker {
+    50% { filter: brightness(1.18); }
+}
+
+
+/* ==============================
+   JARDÍN: LOS TRES PUNTOS DE REFERENCIA
+============================== */
+
+/* El único árbol que sigue verde */
+.garden-tree.summer {
+    --la: #8db46c;
+    --lb: #78a35a;
+    --lc: #6a9552;
+}
+
+/* El árbol más grande y antiguo (su tamaño lo da la escena) */
+.garden-tree.ancient {
+    --la: #cf8541;
+    --lb: #b9693f;
+    --lc: #9c5a3a;
+}
+
+.garden-tree.ancient::before {
+    left: 30%;
+    width: 40%;
+    background: linear-gradient(90deg, #5c4136, #8a5d4b, #5a3e34);
+    box-shadow: inset 6px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* El espejo que dejó la lluvia */
+.garden-puddle {
+    width: 120px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 40% 35%, #eaf3f8 0, #b9d0e2 38%, #8fb0cc 100%);
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 3px 8px rgba(70, 100, 130, 0.35), 0 2px 6px rgba(60, 80, 100, 0.18);
+}
+
+.garden-puddle::after {
+    content: "";
+    position: absolute;
+    left: 28%;
+    top: 30%;
+    width: 36%;
+    height: 34%;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    animation: ripple 3.2s ease-out infinite;
+}
+
+@keyframes ripple {
+    from { transform: scale(0.4); opacity: 0.9; }
+    to   { transform: scale(1.5); opacity: 0; }
+}
+
+/* Montones de hojas (solo adorno) */
+.garden-leaves {
+    width: 64px;
+    height: 34px;
+    border-radius: 50%;
+    background:
+        radial-gradient(ellipse 30% 40% at 25% 55%, #d9894a 0 90%, transparent 92%),
+        radial-gradient(ellipse 30% 40% at 52% 40%, #c96f4a 0 90%, transparent 92%),
+        radial-gradient(ellipse 30% 40% at 76% 58%, #e0a85a 0 90%, transparent 92%),
+        radial-gradient(ellipse 26% 36% at 40% 70%, #b8754a 0 90%, transparent 92%),
+        radial-gradient(ellipse 26% 36% at 64% 72%, #d98f9f 0 90%, transparent 92%);
+    filter: drop-shadow(0 3px 3px rgba(70, 45, 40, 0.18));
+}
+
+
+/* ==============================
+   CALABOZO: MUROS, SALAS Y OSCURIDAD
+============================== */
+
+.dwall {
+    position: absolute;
+    pointer-events: none;
+    box-shadow: 0 10px 14px rgba(0, 0, 0, 0.45);
+}
+
+.dwall.v {
+    background:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 2px, transparent 2px 22px),
+        linear-gradient(90deg, #4c4059, #7b6d88 45%, #4a3e57);
+}
+
+.dwall.h {
+    border-radius: 3px;
+    border-bottom: 5px solid #2d2437;
+    background:
+        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0 2px, transparent 2px 28px),
+        linear-gradient(180deg, #8a7c97, #5a4d68);
+}
+
+.dframe { position: absolute; pointer-events: none; }
+.dframe.top    { left: 0; top: 20%; width: 100%; height: 8%; z-index: 27; background: linear-gradient(180deg, #2a2233, #4a3e57); }
+.dframe.left   { left: 0; top: 20%; width: 4%; height: 80%; z-index: 27; background: linear-gradient(90deg, #241d2c, #463a53); }
+.dframe.right  { left: 96%; top: 20%; width: 4%; height: 80%; z-index: 27; background: linear-gradient(270deg, #241d2c, #463a53); }
+.dframe.bottom { left: 0; top: 92.6%; width: 100%; height: 8%; z-index: 99; background: linear-gradient(180deg, #463a53, #201a28); }
+
+/* Suelo de cada sala */
+.droom { position: absolute; pointer-events: none; }
+.droom.r-hall { background: radial-gradient(ellipse at 50% 60%, rgba(150, 90, 120, 0.3), transparent 75%); }
+.droom.r-cor  { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent); }
+.droom.r-nw   { background: rgba(120, 100, 80, 0.2); }
+.droom.r-sw   { background: rgba(80, 105, 150, 0.22); }
+.droom.r-ne   { background: radial-gradient(circle at 60% 40%, rgba(220, 130, 70, 0.26), rgba(200, 120, 70, 0.1)); }
+.droom.r-se   { background: rgba(0, 0, 0, 0.32); }
+
+/* Las salas sin explorar están cubiertas de oscuridad */
+.room-fog {
+    position: absolute;
+    z-index: 180;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, #1b1522, #09060d);
+    opacity: 0.97;
+    transition: opacity 0.7s ease;
+}
+
+.room-fog.dark-room { background: rgba(4, 2, 9, 0.95); }
+
+/* Sellos de luz: cierran cada sala hasta que encuentras la pista que la abre */
+.dseal { position: absolute; pointer-events: none; transition: opacity 1.2s ease; }
+
+.dseal.sealed {
+    border-radius: 6px;
+    background:
+        repeating-linear-gradient(0deg, rgba(235, 215, 255, 0.55) 0 2px, transparent 2px 9px),
+        linear-gradient(90deg, rgba(150, 100, 215, 0.55), rgba(205, 160, 255, 0.8), rgba(150, 100, 215, 0.55));
+    box-shadow: 0 0 16px rgba(170, 120, 240, 0.85), inset 0 0 8px rgba(235, 215, 255, 0.6);
+    animation: seal-pulse 2.4s ease-in-out infinite;
+}
+
+.dseal.sealed.h {
+    background:
+        repeating-linear-gradient(90deg, rgba(235, 215, 255, 0.55) 0 2px, transparent 2px 9px),
+        linear-gradient(180deg, rgba(150, 100, 215, 0.55), rgba(205, 160, 255, 0.8), rgba(150, 100, 215, 0.55));
+}
+
+/* Hueco abierto: una luz tibia indica por dónde ir hasta que Mey entra */
+.dseal.opened::after {
+    content: "";
+    position: absolute;
+    inset: -50% -260%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255, 226, 150, 0.85) 0%, rgba(255, 210, 130, 0.35) 40%, transparent 70%);
+    animation: beacon-pulse 1.8s ease-in-out infinite;
+}
+
+.dseal.h.opened::after { inset: -260% -50%; }
+.dseal.fade { opacity: 0; }
+
+@keyframes seal-pulse {
+    0%, 100% { opacity: 0.75; }
+    50%      { opacity: 1; }
+}
+
+@keyframes beacon-pulse {
+    0%, 100% { opacity: 0.45; transform: scale(0.85); }
+    50%      { opacity: 1; transform: scale(1.1); }
+}
+
+/* La vasija o caja que guarda la nota de la sala brilla suavemente */
+.relic.clue-glow { animation: clue-glow 1.8s ease-in-out infinite; }
+
+@keyframes clue-glow {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(255, 226, 150, 0.45)); }
+    50%      { filter: drop-shadow(0 0 16px rgba(255, 226, 150, 1)); }
+}
+
+/* Antorchas */
+.dtorch { width: 22px; height: 46px; filter: drop-shadow(0 0 22px rgba(255, 170, 90, 0.75)); }
+
+.dtorch::before {   /* soporte */
+    content: "";
+    position: absolute;
+    left: 38%;
+    bottom: 0;
+    width: 24%;
+    height: 62%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #5e463e, #8a6a58, #5a433b);
+}
+
+.dtorch::after {    /* llama */
+    content: "";
+    position: absolute;
+    left: 14%;
+    top: 0;
+    width: 72%;
+    height: 48%;
+    border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+    background: radial-gradient(ellipse at 50% 70%, #fff4c4 0, #ffc46a 45%, #ee7a4a 100%);
+    animation: flame 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes flame {
+    from { transform: scale(0.92, 1.05) rotate(-3deg); }
+    to   { transform: scale(1.06, 0.94) rotate(3deg); }
+}
+
+/* Tablilla grabada */
+.dtablet {
+    width: 44px;
+    height: 52px;
+    border-radius: 14px 14px 4px 4px;
+    background: linear-gradient(160deg, #8d7ea4, #4f4470);
+    box-shadow: inset 4px 3px rgba(255, 255, 255, 0.14), 0 8px 12px rgba(0, 0, 0, 0.4);
+    animation: tablet-glow 3s ease-in-out infinite;
+}
+
+.dtablet::before {
+    content: "";
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    top: 22%;
+    bottom: 20%;
+    background: repeating-linear-gradient(180deg, rgba(255, 235, 190, 0.75) 0 2px, transparent 2px 8px);
+}
+
+@keyframes tablet-glow {
+    50% { filter: drop-shadow(0 0 10px rgba(255, 220, 160, 0.7)); }
+}
+
+/* Estatuas encapuchadas del pasillo */
+.dstatue { width: 34px; height: 72px; }
+
+.dstatue::before {   /* cuerpo */
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 74%;
+    border-radius: 50% 50% 10% 10% / 38% 38% 6% 6%;
+    background: linear-gradient(90deg, #4a4057, #7a6e88 45%, #473d54);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dstatue::after {    /* capucha */
+    content: "";
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    top: 0;
+    height: 34%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #8a7e98, #4d4359);
+}
+
+/* Brasero (la luz de la sala de arriba a la derecha) */
+.dbrazier { width: 46px; height: 54px; filter: drop-shadow(0 0 28px rgba(255, 150, 70, 0.8)); }
+
+.dbrazier::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 44%;
+    border-radius: 6px 6px 50% 50% / 6px 6px 90% 90%;
+    background: linear-gradient(180deg, #7a6a62, #4a3d38);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dbrazier::after {
+    content: "";
+    position: absolute;
+    left: 20%;
+    top: 0;
+    width: 60%;
+    height: 62%;
+    border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+    background: radial-gradient(ellipse at 50% 75%, #fff4c4 0, #ffbe5e 40%, #ee6e3e 100%);
+    animation: flame 0.8s ease-in-out infinite alternate;
+}
+
+/* Las dos pilas: una seca y otra con agua quieta */
+.dbasin { width: 92px; height: 62px; border-radius: 50%; box-shadow: 0 10px 12px rgba(0, 0, 0, 0.4); }
+
+.dbasin.dry {
+    background:
+        radial-gradient(ellipse 62% 56% at 50% 52%, #2a232f 0 72%, transparent 74%),
+        linear-gradient(180deg, #7a6e88, #4d4359);
+}
+
+.dbasin.dry::after {   /* grietas */
+    content: "";
+    position: absolute;
+    left: 24%;
+    right: 24%;
+    top: 30%;
+    bottom: 26%;
+    background:
+        linear-gradient(115deg, transparent 46%, rgba(160, 145, 175, 0.5) 47% 49%, transparent 50%),
+        linear-gradient(65deg, transparent 52%, rgba(160, 145, 175, 0.4) 53% 55%, transparent 56%);
+}
+
+.dbasin.water {
+    background:
+        radial-gradient(ellipse 62% 56% at 50% 52%, #26395f 0%, #6f93c8 70%, transparent 74%),
+        linear-gradient(180deg, #7a6e88, #4d4359);
+    filter: drop-shadow(0 0 16px rgba(140, 180, 255, 0.6));
+}
+
+.dbasin.water::after {   /* destellos de estrellas en el agua quieta */
+    content: "";
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    top: 24%;
+    bottom: 24%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 40%, #fff 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 62% 30%, #e6f1ff 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 70% 62%, #fff 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 40% 70%, #cfe3ff 0 1px, transparent 2px);
+    animation: glint 3.4s ease-in-out infinite;
+}
+
+@keyframes glint {
+    50% { opacity: 0.35; }
+}
+
+
+/* ==============================
+   SOMBRAS: DORMIDAS, EN ALERTA, ATACANDO
+============================== */
+
+.enemy { transition: opacity 0.25s ease; }
+.enemy.flip .sprite { scale: -1 1; }
+
+.enemy[data-state="idle"] .sprite {
+    opacity: 0.62;
+    filter: drop-shadow(0 0 6px rgba(140, 110, 190, 0.4)) saturate(0.7);
+    animation: sleep-breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes sleep-breathe {
+    0%, 100% { transform: translateY(9px) scale(0.86, 0.74); }
+    50%      { transform: translateY(7px) scale(0.9, 0.8); }
+}
+
+.enemy[data-state="idle"]::after {   /* "z" de dormida */
+    content: "z";
+    position: absolute;
+    right: -4px;
+    top: 0;
+    color: #cdb7ee;
+    font-style: italic;
+    font-size: 1.2rem;
+    animation: zzz 2.6s ease-out infinite;
+}
+
+@keyframes zzz {
+    from { transform: translate(0, 6px); opacity: 0; }
+    30%  { opacity: 0.9; }
+    to   { transform: translate(8px, -16px); opacity: 0; }
+}
+
+.enemy-bang {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: -36px;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ffb0cf;
+    color: #4a1f3a;
+    font-weight: 700;
+    line-height: 24px;
+    text-align: center;
+    box-shadow: 0 0 12px rgba(255, 150, 200, 0.9);
+    animation: bang-pop 0.3s ease;
+}
+
+.enemy[data-state="alert"] .enemy-bang { display: block; }
+.enemy[data-state="alert"] .sprite { filter: drop-shadow(0 0 14px rgba(255, 170, 210, 0.9)); }
+
+@keyframes bang-pop {
+    from { transform: translateX(-50%) scale(0.2); }
+    70%  { transform: translateX(-50%) scale(1.25); }
+    to   { transform: translateX(-50%) scale(1); }
+}
+
+/* Círculo de peligro: sal de aquí antes de que termine de llenarse */
+.enemy .tele {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 156px;
+    height: 156px;
+    margin: -78px 0 0 -78px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 130, 180, 0.85);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.enemy.telegraph .tele {
+    opacity: 1;
+    background: radial-gradient(circle, rgba(255, 110, 170, 0.06), rgba(255, 110, 170, 0.3));
+    animation: tele-grow 0.6s linear;
+}
+
+@keyframes tele-grow {
+    from { transform: scale(0.3); }
+    to   { transform: scale(1); }
+}
+
+.enemy.striking .tele {
+    opacity: 1;
+    border: 3px solid #fff;
+    background: radial-gradient(circle, rgba(255, 200, 225, 0.55), rgba(255, 110, 170, 0.15));
+    animation: strike 0.32s ease-out forwards;
+}
+
+@keyframes strike {
+    from { transform: scale(0.9); opacity: 1; }
+    to   { transform: scale(1.25); opacity: 0; }
+}
+
+/* Las que se disuelven (también las dormidas) */
+.enemy.defeated[data-state] .sprite {
+    opacity: 1;
+    animation: shadow-defeat 0.65s ease forwards;
+}
+
+/* Anillo de la explosión de Mey */
+.burst-ring {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    pointer-events: none;
+    border: 4px solid rgba(255, 232, 255, 0.9);
+    box-shadow: 0 0 20px rgba(210, 140, 255, 0.9), inset 0 0 20px rgba(210, 140, 255, 0.6);
+    animation: burst-ring 0.6s ease-out forwards;
+}
+
+@keyframes burst-ring {
+    0%   { width: 20px; height: 20px; opacity: 1; }
+    100% { width: 250px; height: 250px; opacity: 0; }
+}
+
+/* Destello rojizo cuando te hieren */
+.hit-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 240;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle, transparent 45%, rgba(214, 70, 110, 0.55) 100%);
+}
+
+.hit-flash.on { animation: hit-flash 0.5s ease-out; }
+
+@keyframes hit-flash {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* Pantalla de derrota (no es un "game over": es un punto de control) */
+#defeat {
+    position: absolute;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(30, 18, 40, 0.88), rgba(8, 4, 14, 0.97));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s ease;
+}
+
+#defeat.on { opacity: 1; pointer-events: all; }
+
+.defeat-box {
+    max-width: min(88%, 520px);
+    padding: 20px;
+    text-align: center;
+    color: #f0d9e2;
+}
+
+.defeat-star {
+    width: 64px;
+    height: 64px;
+    filter: grayscale(0.7) drop-shadow(0 0 14px rgba(200, 170, 255, 0.6));
+    animation: float 3s ease-in-out infinite;
+}
+
+.defeat-box h3 { margin: 12px 0 10px; font-size: 1.9rem; font-weight: 600; letter-spacing: 0.05em; }
+.defeat-line { margin-bottom: 14px; color: #f1cbd6; font-size: 1.3rem; font-style: italic; }
+.defeat-tip { color: #bda9c8; font-size: 1rem; line-height: 1.5; }
+
+
+/* ==============================
+   BOSQUE: CAMPANAS, CÍRCULO DE FLORES, NOTA
+============================== */
+
+.bell-halo {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    width: 74px;
+    height: 74px;
+    margin: -37px 0 0 -37px;
+    border-radius: 50%;
+    background: radial-gradient(circle, currentColor 0%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.bell.ring .bell-halo { animation: halo 0.75s ease-out; }
+.bell.sung .bell-halo { opacity: 0.32; animation: pulse 2.6s ease-in-out infinite; }
+
+@keyframes halo {
+    0%   { opacity: 0.95; transform: scale(0.4); }
+    100% { opacity: 0; transform: scale(2.6); }
+}
+
+/* Círculo de flores en el suelo */
+.flower-ring {
+    width: 96px;
+    height: 56px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 94% 50%, #f2a9c1 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 88% 70%, #f7c6d6 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 72% 85%, #e98fb0 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 50% 90%, #fbd9e3 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 28% 85%, #f2a9c1 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 12% 70%, #f2a9c1 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 6% 50%, #f7c6d6 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 12% 30%, #e98fb0 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 28% 15%, #fbd9e3 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 50% 10%, #f2a9c1 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 72% 15%, #f2a9c1 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(circle at 88% 30%, #f7c6d6 0 5px, #fff6 5px 6px, transparent 7px),
+        radial-gradient(ellipse 40% 36% at 50% 50%, rgba(150, 175, 110, 0.35), transparent 100%);
+    filter: drop-shadow(0 3px 3px rgba(80, 50, 60, 0.18));
+}
+
+/* Tronco caído */
+.fallen-log {
+    width: 100px;
+    height: 34px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #a87a66, #6d4c42);
+    box-shadow: 0 8px 10px rgba(60, 40, 40, 0.25);
+}
+
+.fallen-log::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 0;
+    width: 22px;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, #d9b79a 0 25%, #b88d73 26% 55%, #8a5d4b 56%);
+}
+
+/* Árbol con un farol colgado */
+.lantern {
+    position: absolute;
+    z-index: 3;
+    left: 76%;
+    top: 52%;
+    width: 14px;
+    height: 20px;
+    border: 2px solid #7a5a3c;
+    border-radius: 4px 4px 7px 7px;
+    background: #ffe9a8;
+    box-shadow: 0 0 18px 6px rgba(255, 220, 140, 0.7);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.lantern::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -16px;
+    width: 2px;
+    height: 16px;
+    background: #7a5a3c;
+}
+
+/* Árbol con el tronco hueco */
+.garden-tree.hollow::before {
+    background:
+        radial-gradient(ellipse 34% 20% at 50% 62%, #1c120f 0 70%, transparent 74%),
+        linear-gradient(90deg, #765447, #9a6b59, #6d4c42);
+}
+
+/* La nota que cae (aparece despacio) y los sitios que se pueden revisar */
+.forest-note { transition: opacity 1.6s ease; }
+.note-hidden { opacity: 0; pointer-events: none; }
+.forest-note.lifted { opacity: 0; }
+
+/* La nota baja flotando desde lo alto del bosque, balanceándose como una hoja */
+.forest-note.falling { animation: note-fall 4.6s ease-in-out forwards; }
+
+@keyframes note-fall {
+    0%   { translate: 16vw -56vh; rotate: -35deg; opacity: 0; }
+    8%   { opacity: 1; }
+    24%  { translate: -5vw -42vh; rotate: 25deg; }
+    44%  { translate: 7vw -26vh; rotate: -22deg; }
+    64%  { translate: -4vw -12vh; rotate: 18deg; }
+    84%  { translate: 2vw -3vh; rotate: -10deg; }
+    100% { translate: 0 0; rotate: 0deg; opacity: 1; }
+}
+.forest-spot { width: 40px; height: 30px; }
+
+.key-item.crystal { filter: drop-shadow(0 0 14px rgba(190, 225, 255, 0.95)) hue-rotate(170deg) saturate(0.7); }
+
+
+/* ==============================
+   BIBLIOTECA: ESCENA DEL LIBRO FINAL
+============================== */
+
+.zone.dim .world { filter: brightness(0.45); transition: filter 1.4s ease; }
+
+#cine {
+    position: absolute;
+    inset: 0;
+    z-index: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow-y: auto;
+    background: rgba(14, 9, 24, 0);
+    transition: background 1.8s ease;
+}
+
+#cine.on { background: rgba(14, 9, 24, 0.92); }
+
+.cine-book {
+    position: relative;
+    flex: none;
+    width: min(92vw, 780px);
+    height: clamp(220px, calc(100dvh - 150px), 500px);
+    margin-bottom: 18px;
+    perspective: 1500px;
+    opacity: 0;
+    transition: opacity 1.4s ease 0.4s;
+}
+
+/* Cerrado se ve solo la portada (mitad derecha); al abrirse el libro se centra y muestra las dos páginas */
+#cine.on .cine-book { opacity: 1; animation: cine-slide 2.4s ease 1.6s backwards; }
+
+.cine-spread {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    border-radius: 6px 14px 14px 6px;
+}
+
+.cine-leaf {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: clamp(14px, 4vh, 34px) clamp(14px, 3.4vw, 34px);
+    overflow: hidden;
+}
+
+.cine-leaf.left {
+    border-radius: 6px 0 0 6px;
+    background: linear-gradient(90deg, #f1e0bc, #fbf1da 85%, #e9d6ad);
+    box-shadow: 0 0 46px rgba(255, 235, 170, 0.55), 0 16px 30px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    animation: cine-left-in 1.4s ease 2.6s forwards;
+}
+
+.cine-leaf.right {
+    border-radius: 0 14px 14px 0;
+    background: linear-gradient(90deg, #e9d6ad, #fbf1da 15%, #fff7e6);
+    box-shadow: 0 0 46px rgba(255, 235, 170, 0.55), 0 16px 30px rgba(0, 0, 0, 0.45);
+}
+
+.cine-text { width: 100%; }
+
+.cine-text p {
+    margin: 0 0 clamp(8px, 1.8vh, 16px);
+    color: #4a3128;
+    font-size: clamp(0.8rem, min(2.2vw, 2.7dvh), 1.2rem);
+    line-height: 1.5;
+    text-align: center;
+    opacity: 0;
+    animation: cine-in 2.2s ease calc(3.8s + var(--i) * 3.4s) forwards;
+}
+
+.cine-text p:last-child { margin-bottom: 0; }
+
+.cine-leaf.right .cine-text p:last-child {
+    color: #9a4a5a;
+    font-size: clamp(0.95rem, min(2.7vw, 3.2dvh), 1.45rem);
+    font-style: italic;
+}
+
+.cine-cover {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 14px 20px 22px;
+    border-left: 12px solid #d98f9f;
+    border-radius: 6px 14px 14px 6px;
+    background: linear-gradient(165deg, #b8c58d 0%, #e8cf8a 55%, #f0b9b0 100%);
+    box-shadow: 0 14px 24px rgba(0, 0, 0, 0.4);
+    backface-visibility: hidden;
+    transform-origin: left center;
+    animation: cine-open 2.4s cubic-bezier(0.4, 0.1, 0.2, 1) 1.6s forwards;
+}
+
+.cine-cover svg {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 8px rgba(255, 245, 190, 0.9));
+}
+
+.cine-cover h4 { color: #5a3a2f; font-size: 1.4rem; font-style: italic; font-weight: 600; line-height: 1.1; text-align: center; }
+.cine-cover span { margin-top: 8px; color: rgba(90, 58, 47, 0.8); font-size: 0.85rem; text-align: center; }
+
+@keyframes cine-open { to { transform: rotateY(-180deg); } }
+@keyframes cine-slide { from { transform: translateX(-25%); } to { transform: none; } }
+@keyframes cine-left-in { to { opacity: 1; } }
+
+.cine-btn {
+    flex: none;
+    margin-top: 18px;
+    opacity: 0;
+    visibility: hidden;
+    animation: cine-btn 1.6s ease calc(3.8s + var(--n) * 3.4s + 1.5s) forwards;
+}
+
+@keyframes cine-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes cine-btn {
+    0%   { opacity: 0; visibility: hidden; }
+    1%   { visibility: visible; }
+    100% { opacity: 1; visibility: visible; }
+}
+
+
+/* ==============================
+   RECUERDOS Y FINAL
+============================== */
+
+#card.memory h3 { font-style: italic; }
+
+#final-line0 {
+    margin-bottom: 22px;
+    color: #f1cbd6;
+    font-size: clamp(1.1rem, 3.2vw, 1.6rem);
+    font-style: italic;
+    opacity: 0;
+    animation: rise-in 2.4s ease 0.8s forwards;
+}
+
+#final-line3 {
+    margin-top: 12px;
+    color: #f6dfe6;
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    opacity: 0;
+    animation: rise-in 2.4s ease 10.5s forwards;
+}
+
+.final-star {
+    animation: final-star-in 5s ease-out both, float 4s ease-in-out 5s infinite;
+}
+
+@keyframes final-star-in {
+    from { transform: translateX(-26vw); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+/* El hilo que une la estrella y la luna: la distancia no las separa */
+.final-thread {
+    position: absolute;
+    height: 2px;
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, rgba(255, 225, 140, 0.9), rgba(255, 190, 215, 0.9));
+    box-shadow: 0 0 10px rgba(255, 220, 150, 0.8);
+    opacity: 0;
+    animation: thread-in 3s ease 6s forwards;
+}
+
+@keyframes thread-in { to { opacity: 0.85; } }
+
+@media (prefers-reduced-motion: reduce) {
+    .enemy .sprite,
+    .dtorch::after,
+    .dbrazier::after,
+    .garden-puddle::after,
+    .final-star {
+        animation: none;
+    }
+
+    .cine-text p,
+    .cine-btn,
+    #final-line0,
+    #final-line3,
+    .final-thread {
+        animation-duration: 0.01s;
+        animation-delay: 0s !important;
+    }
+}
