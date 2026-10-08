@@ -2614,3 +2614,23 @@ html { font-size: calc(16px * var(--u, 1)); }
     0%, 30%   { transform: rotate(0deg); }
     60%, 100% { transform: rotate(-90deg); }
 }
+
+/* Tarjetas: el texto se desliza y el botón queda siempre visible abajo */
+#card { display: flex; flex-direction: column; overflow: hidden; }
+#card-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+#card #card-btn { flex: none; align-self: center; margin-top: calc(12px * var(--u, 1)); }
+
+/* Final en pantallas bajas: luna y estrella más chicas y más arriba */
+@media (max-height: 520px) {
+    .final-moon {
+        top: 3%;
+        width: clamp(44px, 20vh, 110px);
+        height: clamp(44px, 20vh, 110px);
+    }
+    .final-star {
+        top: 7%;
+        width: clamp(34px, 15vh, 84px);
+        height: clamp(34px, 15vh, 84px);
+        left: calc(56% - clamp(34px, 15vh, 84px) - 4px);
+    }
+}

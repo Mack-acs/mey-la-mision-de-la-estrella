@@ -348,9 +348,48 @@ function resize() {
     st.setProperty("--s", S);
     st.setProperty("--u", U);
     st.setProperty("--t", T);
+    fitAll();
+}
+
+/* ---------- AJUSTE AUTOMÁTICO DE BLOQUES DE CONTENIDO ----------
+   Inicio, prólogo, final y tarjetas (carta, libros, notas) se achican
+   lo necesario para caber completos en cualquier pantalla. */
+function fitBlock(el, maxW, maxH, origin, min) {
+    if (!el || !el.offsetParent && getComputedStyle(el).position !== "fixed") return 1;
+    el.style.scale = "1";
+    el.style.transformOrigin = origin;
+    const w = el.scrollWidth || 1, h = el.scrollHeight || 1;
+    const k = Math.max(min, Math.min(1, maxW / w, maxH / h));
+    el.style.scale = String(k);
+    return k;
+}
+
+function fitAll() {
+    const W = innerWidth, H = innerHeight;
+    fitBlock(document.querySelector(".title-container"),     W - 24, H - 16, "50% 50%", 0.3);
+    fitBlock(document.querySelector(".prologue-container"),  W - 24, H - 16, "50% 50%", 0.3);
+    // En el final, el texto se acomoda debajo de la luna y la estrella cuando la pantalla es baja
+    let skyBottom = 0;
+    const moon = document.querySelector(".final-moon");
+    if (H <= 520 && moon && moon.offsetParent) skyBottom = moon.offsetTop + moon.offsetHeight + 4;
+    fitBlock(document.querySelector(".final-text"), W - 8, Math.min(H * 0.86, H * 0.88 - skyBottom), "50% 100%", 0.3);
+    fitCard();
+}
+
+function fitCard() {
+    const card = document.getElementById("card");
+    const ov = document.getElementById("overlay");
+    if (!card || !ov || ov.classList.contains("hidden")) return;
+    const W = innerWidth, H = innerHeight;
+    card.style.maxHeight = "none";
+    const k = fitBlock(card, W - 24, H - 20, "50% 50%", 0.8);
+    // si ni así cabe (texto largo), el texto se desliza dentro de la tarjeta
+    // y el botón se queda fijo abajo, siempre visible
+    if (card.scrollHeight * k > H - 20) card.style.maxHeight = ((H - 20) / k) + "px";
 }
 
 window.addEventListener("resize", resize);
+window.addEventListener("orientationchange", () => setTimeout(resize, 250));
 resize();
 
 const SPEED = 230;            // velocidad de Mey (px/seg)
@@ -564,8 +603,9 @@ let paused = false;
 function showCard({ html, button = "CONTINUAR", cls = "", onClose }) {
     const card = $("card");
     card.className = cls;
-    card.innerHTML = `${html}<button id="card-btn" class="btn">${button}</button>`;
+    card.innerHTML = `<div id="card-body">${html}</div><button id="card-btn" class="btn">${button}</button>`;
     $("overlay").classList.remove("hidden");
+    fitCard();
     paused = true;
     keys.clear();
     hidePrompt();
@@ -2927,6 +2967,7 @@ function goTo(scene) {
         setRain(!!scene.rain);
 
         if (scene.enter) scene.enter();
+        fitAll();
 
         fade.classList.remove("on");
         changing = false;
