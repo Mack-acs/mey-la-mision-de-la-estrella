@@ -1074,7 +1074,7 @@ class Zone {
 
             const b = this.bounds;
             this.x = clamp(this.x, b.x0, b.x1);
-            this.y = clamp(this.y, b.y0, isTouch ? Math.min(b.y1, 80) : b.y1);
+            this.y = clamp(this.y, b.y0, b.y1);
         }
 
         this.place(this.player, this.x, this.y);
