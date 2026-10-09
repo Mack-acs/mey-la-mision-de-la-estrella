@@ -1052,8 +1052,11 @@ class Zone {
 
         let dx = (keys.has("right") ? 1 : 0) - (keys.has("left") ? 1 : 0);
         let dy = (keys.has("down") ? 1 : 0) - (keys.has("up") ? 1 : 0);
-        const moving = dx !== 0 || dy !== 0;
+       const moving = dx !== 0 || dy !== 0;
 
+        // En celular, al empezar a caminar desaparecen los mensajes de arriba
+        if (isTouch && moving && !this.wasMoving) clearDialogue();
+        this.wasMoving = moving;
         if (moving) {
             if (isTouch) this.closeClues();   // en celular, al caminar se cierran las pistas
             const len = Math.hypot(dx, dy);
