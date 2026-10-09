@@ -559,8 +559,27 @@ const promptEl = $("prompt");
 let dialogueQueue = [];
 let dialogueTimer = null;
 
+/* En celular, los textos que hablan de teclas se cambian por los botones táctiles */
+const TOUCH_TEXT = [
+    [/ \(también con ESPACIO\)/g, ""],
+    [/E levanta objetos y, si no hay nada cerca, lanza una explosión de luz/g, "INTERACTUAR levanta objetos y ATACAR lanza una explosión de luz"],
+    [/E levanta objetos · E libre ataca/g, "INTERACTUAR levanta objetos · ATACAR lanza luz"],
+    [/ Q abre y cierra tus pistas\./g, " Toca el recuadro de pistas para abrirlo o cerrarlo."],
+    [/ Q las abre\./g, " Toca el recuadro de pistas para abrirlas."],
+    [/ Q abre (tu nota|tus notas)\./g, " Toca el recuadro de notas para abrirlo."],
+    [/presiona E/g, "toca INTERACTUAR"],
+    [/explosión de luz con E\b/g, "explosión de luz con ATACAR"],
+    [/\(E\)/g, "(ATACAR)"],
+    [/con E\b/g, "con INTERACTUAR"]
+];
+
+function touchText(t) {
+    if (!isTouch || typeof t !== "string") return t;
+    return TOUCH_TEXT.reduce((out, [re, to]) => out.replace(re, to), t);
+}
+
 function say(title, text, ms = 3600) {
-    dialogueQueue.push({ title, text, ms });
+    dialogueQueue.push({ title, text: touchText(text), ms });
     if (!dialogueTimer) showNextDialogue();
 }
 
@@ -966,7 +985,7 @@ class Zone {
     }
 
     setGoal(html) {
-        this.goalEl.innerHTML = html;
+        this.goalEl.innerHTML = touchText(html);
     }
 
 
@@ -2159,7 +2178,7 @@ const dungeonScene = new Zone({
         const ov = ensureDefeatOverlay();
         ov.querySelector("h3").textContent = D.title;
         ov.querySelector(".defeat-line").textContent = D.lines[(this.deaths - 1) % D.lines.length];
-        ov.querySelector(".defeat-tip").textContent = D.tips[(this.deaths - 1) % D.tips.length];
+        ov.querySelector(".defeat-tip").textContent = touchText(D.tips[(this.deaths - 1) % D.tips.length]);
 
         const id = this.runId;
         setTimeout(() => ov.classList.add("on"), 450);
